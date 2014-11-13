@@ -1,11 +1,12 @@
-(defvar ampl-tab-width 4 "Width of a tab in AMPL mode")
+(defvar mathprog-tab-width 4 "Width of a tab in MATHPROG mode")
 
-(defvar ampl-mode-hook nil)
-(defvar ampl-basic-offset)
+(defvar mathprog-mode-hook nil)
+(defvar mathprog-basic-offset)
 
-(add-to-list 'auto-mode-alist '("\\.mod'" . ampl-mode))
+(add-to-list 'auto-mode-alist '("\\.mod'" . mathprog-mode))
+(add-to-list 'auto-mode-alist '("\\.dat'" . mathprog-mode))
 
-(defvar ampl-mode-syntax-table
+(defvar mathprog-mode-syntax-table
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?_ "w" table)
     (modify-syntax-entry ?# "<" table) ; start single-line comments
@@ -16,9 +17,9 @@
     (modify-syntax-entry ?/ "> 4b" table)
     (modify-syntax-entry ?' "\"" table) ; single-quoted strings
     table)
-  "Syntax table for `ampl-mode'.")
+  "Syntax table for `mathprog-mode'.")
 
-(defvar ampl-reserved-words
+(defvar mathprog-reserved-words
   '(
     "Current"
     "IN"
@@ -72,7 +73,7 @@
     "set"
     ))
 
-(defvar ampl-arithmetic-functions
+(defvar mathprog-arithmetic-functions
   '(
     "abs"
     "acos"
@@ -103,19 +104,21 @@
     "trunc"
     ))
 
-(setq ampl-reserved-words-regexp (regexp-opt ampl-reserved-words 'words))
-(setq ampl-arithmetic-regexp (regexp-opt ampl-arithmetic-functions 'words))
+(setq mathprog-reserved-words-regexp (regexp-opt mathprog-reserved-words 'words))
+(setq mathprog-arithmetic-regexp (regexp-opt mathprog-arithmetic-functions 'words))
 
-(setq ampl-font-lock-keywords
+(setq mathprog-font-lock-keywords
       `(
-        (,ampl-reserved-words-regexp . font-lock-builtin-face)
-        (,ampl-arithmetic-regexp . font-lock-function-name-face)))
+        (,mathprog-reserved-words-regexp . font-lock-builtin-face)
+        (,mathprog-arithmetic-regexp . font-lock-function-name-face)))
 
-(define-derived-mode ampl-mode prog-mode "AMPL"
-  "Major mode for editing AMPL code"
-  (set-syntax-table ampl-mode-syntax-table)
-  (setq font-lock-defaults '((ampl-font-lock-keywords)))
-  (set (make-local-variable 'ampl-basic-offset) 4)
+(define-derived-mode mathprog-mode prog-mode "MATHPROG"
+  "Major mode for editing MATHPROG code."
+  (set-syntax-table mathprog-mode-syntax-table)
+  (setq font-lock-defaults '((mathprog-font-lock-keywords)))
+  (set (make-local-variable 'mathprog-basic-offset) 4)
   (set (make-local-variable 'comment-start) "# "))
 
+(defalias 'ampl-mode 'mathprog-mode)
 (provide 'ampl-mode)
+(provide 'mathprog-mode)
