@@ -14,7 +14,6 @@
 
 ;;; font-lock
 
-
 (defconst mathprog-declarations
   '("maximize"
     "minimize"
@@ -173,6 +172,36 @@ For example,
 ;;    block
 ;;
 
+;; We define a block as one of the following.
+;;
+;; 1. A full expression, optionally terminated by a semicolon
+;; 2. A set of expressions inside a pair of curly braces
+;; 3. Anything inside a pair of square braces
+;;
+;; We indent as follows:
+;;
+;; 1. At the beginning of the buffer we indent to 0.
+;; 2. If we are on the second line of a block, we indent relative to
+;;   the block.
+
+(defun mathprog-indent-line ()
+  "Indent the current line"
+  (interactive)
+  (let ((indentation-level 0))
+    (save-excursion
+      (previous-line)
+      (end-of-line)
+      (setq indentation-level (current-indentation))
+      (if (looking-back ":[ ]*$")
+          (setq indentation-level
+                (+ mathprog-basic-offset indentation-level)))
+      (if (looking-back ";[ ]*$")
+          (setq indentation-level 0)))
+    (save-excursion
+      (indent-line-to indentation-level))
+    (if (< (current-column) indentation-level)
+        (move-to-column indentation-level))))
+
 ;;; syntax table
 
 (defvar mathprog-mode-syntax-table
@@ -197,9 +226,9 @@ For example,
 (define-derived-mode mathprog-mode prog-mode "MathProg"
   "Major mode for editing GNU MathProg or AMPL code."
   (set-syntax-table mathprog-mode-syntax-table)
-  (setq font-lock-defaults '((mathprog-font-lock-keywords)))
+  (set (make-local-variable 'font-lock-defaults) '((mathprog-font-lock-keywords)))
   (set (make-local-variable 'mathprog-basic-offset) 4)
-  (font-lock-mode)
+  (set (make-local-variable 'indent-line-function) 'mathprog-indent-line)
   ;(set (make-local-variable 'comment-start) "# "))
   )
 
