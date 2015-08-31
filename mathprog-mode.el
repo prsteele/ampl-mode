@@ -178,13 +178,18 @@ For example,
 (defvar mathprog-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?_ "w" st)     ; Underscores can be in words
-    (modify-syntax-entry ?# "<" st)     ; start single-line comments
-    (modify-syntax-entry ?\n ">" st)    ; end single-line comments
-    (modify-syntax-entry ?/ ". 14" st)  ; / begins and ends /*
-                                        ; */-style comments
-    (modify-syntax-entry ?* ". 23b" st) ; * is the second and first
-                                        ; character in /* */-style
-                                        ; comment delimters
+
+    (modify-syntax-entry ?/ ". 14" st)
+    (modify-syntax-entry ?* ". 23" st)
+    (modify-syntax-entry ?# "< b" st)     ; start single-line comments
+    (modify-syntax-entry ?\n "> b" st)
+
+    ;; (modify-syntax-entry ?/ ". 124b" st)  ; / begins and ends /*
+    ;;                                     ; */-style comments
+    ;; (modify-syntax-entry ?\n "> b" st)    ; end single-line comments
+    ;; (modify-syntax-entry ?* ". 23" st) ; * is the second and first
+    ;;                                     ; character in /* */-style
+    ;;                                     ; comment delimters
     (modify-syntax-entry ?' "\"" st)    ; single-quoted strings
     st)
   "Syntax table for `mathprog-mode'.")
@@ -194,7 +199,9 @@ For example,
   (set-syntax-table mathprog-mode-syntax-table)
   (setq font-lock-defaults '((mathprog-font-lock-keywords)))
   (set (make-local-variable 'mathprog-basic-offset) 4)
-  (set (make-local-variable 'comment-start) "# "))
+  (font-lock-mode)
+  ;(set (make-local-variable 'comment-start) "# "))
+  )
 
 (defalias 'ampl-mode 'mathprog-mode)
 (provide 'ampl-mode)
